@@ -45,10 +45,8 @@ impl LexicalAnalyzer {
             .insert("hindsa".to_string(), TokenType::Keyword); // int
         self.keywords
             .insert("asharia".to_string(), TokenType::Keyword); // float
-        self.keywords
-            .insert("agar".to_string(), TokenType::Keyword); // if
-        self.keywords
-            .insert("phir".to_string(), TokenType::Keyword); // else
+        self.keywords.insert("agar".to_string(), TokenType::Keyword); // if
+        self.keywords.insert("phir".to_string(), TokenType::Keyword); // else
         self.keywords
             .insert("lekinagar".to_string(), TokenType::Keyword); // else if
         self.keywords
@@ -125,12 +123,16 @@ impl LexicalAnalyzer {
             // Identify keywords or identifiers
             if LexicalAnalyzer::is_alpha(current_char) {
                 let word = self.get_next_word();
-                let token_type = self
-                    .keywords
-                    .get(&word)
-                    .cloned()
-                    .unwrap_or(TokenType::Identifier);
-                tokens.push(Token::new(token_type, word));
+                match self.keywords.get(&word) {
+                    Some(token_type) => {
+                        let token = Token::new(token_type.clone(), word);
+                        tokens.push(token);
+                    }
+                    None => {
+                        let token = Token::new(TokenType::Identifier, word);
+                        tokens.push(token);
+                    }
+                }
             }
             // Identify integer or float literals
             else if LexicalAnalyzer::is_digit(current_char) {
